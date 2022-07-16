@@ -43,6 +43,7 @@ def train(dataloader, model, criterion, optimizer):
 
 
 def test(dataloader, model, criterion):
+	size = 0
 	count = len(dataloader)
 	model.eval()
 	loss, correct = 0, 0
