@@ -3,7 +3,7 @@ import torch.nn as nn
 
 
 class BaselineArch(nn.Module):
-    def __init__(self, in_channels, channels, stride):
+    def __init__(self, in_channels: int, channels: int, stride: int):
         super().__init__()
         self.out_channels = out_channels = channels
         self.relu = nn.ReLU(inplace=True)
@@ -35,7 +35,7 @@ class BaselineArch(nn.Module):
 
 
 class BottleneckArch(nn.Module):
-    def __init__(self, in_channels, channels, stride):
+    def __init__(self, in_channels: int, channels: int, stride: int):
         super().__init__()
         self.out_channels = out_channels = channels * 4
         self.relu = nn.ReLU(inplace=True)
@@ -73,7 +73,7 @@ class BottleneckArch(nn.Module):
 
 
 class Layer(nn.Module):
-    def __init__(self, Block, in_channels, channels, stride, count):
+    def __init__(self, Block, in_channels: int, channels: int, stride: int, count: int):
         super().__init__()
         blocks = []
 
@@ -94,7 +94,7 @@ class Layer(nn.Module):
 
 
 class ResNet(nn.Module):
-    def __init__(self, Block, counts, start_channels, classes):
+    def __init__(self, Block, counts: int, start_channels: int, classes: int):
         super().__init__()
         self.relu = nn.ReLU(inplace=True)
         self.conv0 = nn.Conv2d(3, start_channels, 7, padding=3,
@@ -135,21 +135,21 @@ class ResNet(nn.Module):
         return x
 
 
-def resnet18(start_channels, classes):
+def resnet18(start_channels: int, classes: int):
     return ResNet(BaselineArch, [2, 2, 2, 2], start_channels, classes)
 
 
-def resnet34(start_channels, classes):
+def resnet34(start_channels: int, classes: int):
     return ResNet(BaselineArch, [3, 4, 6, 3], start_channels, classes)
 
 
-def resnet50(start_channels, classes):
+def resnet50(start_channels: int, classes: int):
     return ResNet(BottleneckArch, [3, 4, 6, 3], start_channels, classes)
 
 
-def resnet101(start_channels, classes):
+def resnet101(start_channels: int, classes: int):
     return ResNet(BottleneckArch, [3, 4, 23, 3], start_channels, classes)
 
 
-def resnet152(start_channels, classes):
+def resnet152(start_channels: int, classes: int):
     return ResNet(BottleneckArch, [3, 8, 36, 3], start_channels, classes)

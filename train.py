@@ -4,6 +4,7 @@ import argparse
 
 import torch
 import torch.nn as nn
+from torch.utils.data import Dataset
 
 from mydata import CustomImageDataset
 import resnet
@@ -11,9 +12,12 @@ import resnet
 from torch.utils.data import DataLoader
 
 
-def train(dataloader, model, criterion, optimizer):
-    running_loss = 0.0
-    count = len(dataloader)
+def train(
+        dataloader: DataLoader, model: nn.Module,
+        criterion: nn.CrossEntropyLoss, optimizer: torch.optim.SGD
+):
+    running_loss: float = 0.0
+    count: int = len(dataloader)
     for i, (inputs, labels) in enumerate(dataloader):
         optimizer.zero_grad()
         outputs = model(inputs)
@@ -25,7 +29,10 @@ def train(dataloader, model, criterion, optimizer):
     print(f"[{running_loss / count:.5f}]")
 
 
-def test(dataloader, model, criterion):
+def test(
+        dataloader: DataLoader, model: nn.Module,
+        criterion: nn.CrossEntropyLoss
+):
     size = 0
     model.eval()
     loss, correct = 0, 0
@@ -33,7 +40,7 @@ def test(dataloader, model, criterion):
         for i, (inputs, labels) in enumerate(dataloader):
             outputs = model(inputs)
             loss += criterion(outputs, labels).item()
-            nc = (outputs.argmax(1) == labels).type(torch.float).sum().item()
+            nc: int = (outputs.argmax(1) == labels).type(torch.float).sum().item()
             size += len(inputs)
             correct += nc
     loss /= size
@@ -55,19 +62,19 @@ if __name__ == "__main__":
 
     print(args)
 
-    device = "cpu"
+    device: str = "cpu"
 
     try:
         ROOT_DIR
     except NameError:
-        ROOT_DIR = ""
+        ROOT_DIR: str = ""
 
     all_data = CustomImageDataset(
         ROOT_DIR + "list.jpg.txt", ROOT_DIR + "resized_images_224"
     )
-    all_len = len(all_data)
-    train_len = int(all_len * args.tr)
-    test_len = all_len - train_len
+    all_len: int = len(all_data)
+    train_len: int = int(all_len * args.tr)
+    test_len: int = all_len - train_len
     train_data, test_data = torch.utils.data.random_split(
         all_data, [train_len, test_len]
     )
