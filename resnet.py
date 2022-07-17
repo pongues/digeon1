@@ -7,16 +7,19 @@ class BaselineArch(nn.Module):
         super().__init__()
         self.out_channels = out_channels = channels
         self.relu = nn.ReLU(inplace=True)
-        self.conv1 = nn.Conv2d(in_channels, out_channels, 3, stride=stride, padding=1, bias=False)
+        self.conv1 = nn.Conv2d(in_channels, out_channels, 3, padding=1,
+                               stride=stride, bias=False)
         self.norm1 = nn.BatchNorm2d(out_channels)
-        self.conv2 = nn.Conv2d(out_channels, out_channels, 3, stride=1, padding=1, bias=False)
+        self.conv2 = nn.Conv2d(out_channels, out_channels, 3, padding=1,
+                               stride=1, bias=False)
         self.norm2 = nn.BatchNorm2d(out_channels)
 
         if in_channels == out_channels and stride == 1:
             self.shortcut = nn.Sequential()
         else:
             self.shortcut = nn.Sequential(
-                nn.Conv2d(in_channels, out_channels, 1, stride=stride, padding=0, bias=False),
+                nn.Conv2d(in_channels, out_channels, 1, padding=0,
+                          stride=stride, bias=False),
                 nn.BatchNorm2d(out_channels)
             )
 
@@ -36,18 +39,22 @@ class BottleneckArch(nn.Module):
         super().__init__()
         self.out_channels = out_channels = channels * 4
         self.relu = nn.ReLU(inplace=True)
-        self.conv1 = nn.Conv2d(in_channels, channels, 1, stride=stride, padding=0, bias=False)
+        self.conv1 = nn.Conv2d(in_channels, channels, 1, padding=0,
+                               stride=stride, bias=False)
         self.norm1 = nn.BatchNorm2d(channels)
-        self.conv2 = nn.Conv2d(channels, channels, 3, stride=1, padding=1, bias=False)
+        self.conv2 = nn.Conv2d(channels, channels, 3, padding=1,
+                               stride=1, bias=False)
         self.norm2 = nn.BatchNorm2d(channels)
-        self.conv3 = nn.Conv2d(channels, out_channels, 1, stride=1, padding=0, bias=False)
+        self.conv3 = nn.Conv2d(channels, out_channels, 1, padding=0,
+                               stride=1, bias=False)
         self.norm3 = nn.BatchNorm2d(out_channels)
 
         if in_channels == out_channels and stride == 1:
             self.shortcut = nn.Sequential()
         else:
             self.shortcut = nn.Sequential(
-                nn.Conv2d(in_channels, out_channels, 1, stride=stride, padding=0, bias=False),
+                nn.Conv2d(in_channels, out_channels, 1, padding=0,
+                          stride=stride, bias=False),
                 nn.BatchNorm2d(out_channels)
             )
 
@@ -90,19 +97,25 @@ class ResNet(nn.Module):
     def __init__(self, Block, counts, start_channels, classes):
         super().__init__()
         self.relu = nn.ReLU(inplace=True)
-        self.conv0 = nn.Conv2d(3, start_channels, kernel_size=7, stride=2, padding=3, bias=False)
+        self.conv0 = nn.Conv2d(3, start_channels, 7, padding=3,
+                               stride=2, bias=False)
         self.norm0 = nn.BatchNorm2d(start_channels)
         self.pool0 = nn.MaxPool2d(3, stride=2, padding=1)
-        self.layer1 = Layer(Block, start_channels, start_channels, 1, counts[0])
-        self.layer2 = Layer(Block, self.layer1.out_channels, start_channels*2, 2, counts[1])
-        self.layer3 = Layer(Block, self.layer2.out_channels, start_channels*4, 2, counts[2])
-        self.layer4 = Layer(Block, self.layer3.out_channels, start_channels*8, 2, counts[3])
+        self.layer1 = Layer(Block, start_channels,
+                            start_channels, 1, counts[0])
+        self.layer2 = Layer(Block, self.layer1.out_channels,
+                            start_channels*2, 2, counts[1])
+        self.layer3 = Layer(Block, self.layer2.out_channels,
+                            start_channels*4, 2, counts[2])
+        self.layer4 = Layer(Block, self.layer3.out_channels,
+                            start_channels*8, 2, counts[3])
         self.avgpool = nn.AdaptiveAvgPool2d((1, 1))
         self.linear = nn.Linear(self.layer4.out_channels, classes)
 
         for m in self.modules():
             if isinstance(m, nn.Conv2d):
-                nn.init.kaiming_normal_(m.weight, mode="fan_out", nonlinearity="relu")
+                nn.init.kaiming_normal_(m.weight, mode="fan_out",
+                                        nonlinearity="relu")
             elif isinstance(m, nn.BatchNorm2d):
                 nn.init.constant_(m.weight, 1)
                 nn.init.constant_(m.bias, 0)
