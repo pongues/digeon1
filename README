@@ -1,19 +1,14 @@
-train.py
-  学習するための実行コード
+# train.py
+学習するための実行コード
 
-test.py
-  推論するための実行コード
+# test.py
+推論するための実行コード
 
-resnet.py
-  ResNetの実装コード
+# resnet.py
+ResNetの実装コード
 
-mydata.py
-  画像データを読み込むコード
+# mydata.py
+画像データを読み込むコード
 
-resized_images_224_[1,2,3,4,5].tar.bz2.split
-  以下で展開すると、画像データが入ったディレクトリが作られる
-  cat resized_images_224_[1,2,3,4,5].tar.bz2.split > resized_images_224.tar.bz2
-  tar -xvf resized_images_224.tar.bz2
-
-list.jpg.txt
-  画像データの一覧
+# list.jpg.txt
+画像データの一覧
